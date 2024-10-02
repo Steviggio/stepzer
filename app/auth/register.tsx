@@ -1,28 +1,16 @@
 import React, { useState } from 'react';
-import { Alert, StyleSheet, View } from 'react-native';
-import { supabase } from '../lib/supabase';
+import { Alert, StyleSheet, View, TouchableOpacity, Text } from 'react-native';
+import { supabase } from '@/lib/supabase';
 import { Button, Input } from '@ui-kitten/components';
+import { useNavigation } from '@react-navigation/native';
+import { useRouter } from 'expo-router';
 
-export default function Auth() {
+export default function Register() {
   const [email, setEmail] = useState<string>('');
+  const[name,setName] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
-
-  async function signInWithEmail() {
-    setLoading(true);
-    const { data: { session }, error } = await supabase.auth.signInWithPassword({
-      email: email,
-      password: password,
-    });
-
-    if (error) {
-      Alert.alert(error.message);
-      console.log('Sign in failed:', error.message);
-    } else {
-      console.log('User signed in:', session);
-    }
-    setLoading(false);
-  }
+  const router = useRouter(); // Hook pour naviguer vers la page de connexion
 
   async function signUpWithEmail() {
     setLoading(true);
@@ -61,15 +49,26 @@ export default function Auth() {
           autoCapitalize={'none'}
         />
       </View>
+      <View style={styles.verticallySpaced}>
+        <Input
+          label="Nom d'utilisateur"
+          onChangeText={(text) => setName(text)}
+          value={name}
+          secureTextEntry={true}
+          placeholder="Nom d'utilisateur"
+          autoCapitalize={'none'}
+        />
+      </View>
       <View style={[styles.verticallySpaced, styles.mt20]}>
-        <Button disabled={loading} onPress={signInWithEmail}>
-          Sign in
+        <Button disabled={loading} onPress={signUpWithEmail}>
+          Sign up
         </Button>
       </View>
+
       <View style={styles.verticallySpaced}>
-        <Button disabled={loading} onPress={signUpWithEmail} >
-        Sign up
-        </Button>
+        <TouchableOpacity onPress={() => router.push('/auth/login')}>
+          <Text style={styles.link}>Already have an account? Sign in</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -87,5 +86,10 @@ const styles = StyleSheet.create({
   },
   mt20: {
     marginTop: 20,
+  },
+  link: {
+    color: '#3366FF', // Couleur du lien
+    textAlign: 'center',
+    marginTop: 10,
   },
 });

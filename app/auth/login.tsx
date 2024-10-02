@@ -1,12 +1,15 @@
 import React, { useState } from 'react';
-import { Alert, StyleSheet, View } from 'react-native';
-import { supabase } from '../lib/supabase';
+import { Alert, StyleSheet, View, TouchableOpacity, Text } from 'react-native';
+import { supabase } from '@/lib/supabase';
 import { Button, Input } from '@ui-kitten/components';
+import { useNavigation } from '@react-navigation/native';
+import { useRouter } from 'expo-router';
 
-export default function Auth() {
+export default function Login() {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
+  const router = useRouter(); // Hook pour naviguer vers la page de connexion
 
   async function signInWithEmail() {
     setLoading(true);
@@ -20,22 +23,6 @@ export default function Auth() {
       console.log('Sign in failed:', error.message);
     } else {
       console.log('User signed in:', session);
-    }
-    setLoading(false);
-  }
-
-  async function signUpWithEmail() {
-    setLoading(true);
-    const { data: { session }, error } = await supabase.auth.signUp({
-      email: email,
-      password: password,
-    });
-
-    if (error) {
-      Alert.alert(error.message);
-      console.log('Sign up failed:', error.message);
-    } else {
-      console.log('User signed up:', session);
     }
     setLoading(false);
   }
@@ -66,10 +53,11 @@ export default function Auth() {
           Sign in
         </Button>
       </View>
+
       <View style={styles.verticallySpaced}>
-        <Button disabled={loading} onPress={signUpWithEmail} >
-        Sign up
-        </Button>
+        <TouchableOpacity onPress={() => router.push('/auth/register')}>
+          <Text style={styles.link}>Don't have an account? Sign up</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -87,5 +75,10 @@ const styles = StyleSheet.create({
   },
   mt20: {
     marginTop: 20,
+  },
+  link: {
+    color: '#3366FF', // Couleur du lien
+    textAlign: 'center',
+    marginTop: 10,
   },
 });
