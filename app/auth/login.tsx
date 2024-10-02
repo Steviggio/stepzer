@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Alert, StyleSheet, View, TouchableOpacity, Text } from 'react-native';
 import { supabase } from '@/lib/supabase';
 import { Button, Input } from '@ui-kitten/components';
-import { useNavigation } from '@react-navigation/native';
 import { useRouter } from 'expo-router';
 
 export default function Login() {
@@ -29,32 +28,39 @@ export default function Login() {
 
   return (
     <View style={styles.container}>
-      <View style={[styles.verticallySpaced, styles.mt20]}>
-        <Input
-          label="Email"
-          onChangeText={(text) => setEmail(text)}
-          value={email}
-          placeholder="email@address.com"
-          autoCapitalize={'none'}
-        />
-      </View>
-      <View style={styles.verticallySpaced}>
-        <Input
-          label="Password"
-          onChangeText={(text) => setPassword(text)}
-          value={password}
-          secureTextEntry={true}
-          placeholder="Password"
-          autoCapitalize={'none'}
-        />
-      </View>
-      <View style={[styles.verticallySpaced, styles.mt20]}>
-        <Button disabled={loading} onPress={signInWithEmail}>
-          Sign in
-        </Button>
+      {/* Champs centré */}
+      <View style={styles.formContainer}>
+        <View style={styles.verticallySpaced}>
+          <Input
+            label="Email"
+            onChangeText={(text) => setEmail(text)}
+            value={email}
+            placeholder="email@address.com"
+            autoCapitalize={'none'}
+          />
+        </View>
+        <View style={styles.verticallySpaced}>
+          <Input
+            label="Password"
+            onChangeText={(text) => setPassword(text)}
+            value={password}
+            secureTextEntry={true}
+            placeholder="Password"
+            autoCapitalize={'none'}
+          />
+        </View>
       </View>
 
-      <View style={styles.verticallySpaced}>
+      {/* Bouton et lien en bas */}
+      <View style={styles.buttonContainer}>
+        <Button
+          disabled={loading}
+          onPress={signInWithEmail}
+          style={styles.fullWidthButton} // Prendre toute la largeur
+        >
+          Sign in
+        </Button>
+
         <TouchableOpacity onPress={() => router.push('/auth/register')}>
           <Text style={styles.link}>Don't have an account? Sign up</Text>
         </TouchableOpacity>
@@ -65,20 +71,31 @@ export default function Login() {
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 40,
+    flex: 1, // Remplir tout l'espace
+    justifyContent: 'center', // Centrer verticalement les champs
     padding: 12,
   },
-  verticallySpaced: {
-    paddingTop: 4,
-    paddingBottom: 4,
-    alignSelf: 'stretch',
+  formContainer: {
+    flex: 1, // Remplir l'espace vertical disponible pour centrer les champs
+    justifyContent: 'center', // Centrer verticalement
   },
-  mt20: {
-    marginTop: 20,
+  buttonContainer: {
+    justifyContent: 'flex-end', // Positionner le bouton et lien en bas
+    paddingBottom: 20, // Padding en bas pour espacer du bord
+    width: '100%',
+    alignItems: 'center', // Centrer horizontalement
+  },
+  verticallySpaced: {
+    paddingTop: 8,
+    paddingBottom: 8,
+    width: '100%',
+  },
+  fullWidthButton: {
+    width: '100%', // Prendre toute la largeur
+    marginBottom: 10, // Espacer le bouton du lien
   },
   link: {
-    color: '#3366FF', // Couleur du lien
+    color: '#3366FF',
     textAlign: 'center',
-    marginTop: 10,
   },
 });
