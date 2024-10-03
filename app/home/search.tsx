@@ -1,49 +1,129 @@
-import React, { useState } from 'react';
-import { View, StyleSheet } from 'react-native';
-import { Input, Layout, List, ListItem, Button, Text } from '@ui-kitten/components';
+import React, { useState, useEffect } from 'react';
+import { View, StyleSheet, Alert, Text } from 'react-native';
+import { Input, Layout, List, ListItem, Button } from '@ui-kitten/components';
+import { supabase } from '@/lib/supabase';
+import { User as SupabaseUser } from '@supabase/auth-js';
+import { FunctionsFetchError, FunctionsHttpError, FunctionsRelayError } from '@supabase/supabase-js';
+
+// Définir le type User correctement
+interface User extends SupabaseUser {
+  nom: string;
+  isFriend: boolean;
+}
 
 export default function Search() {
+  const [user, setUser] = useState<User | null>(null);
   const [search, setSearch] = useState('');
-  const [foundUsers, setFoundUsers] = useState([
-    { id: 2, name: 'Jane Doe', isFriend: true },
-    { id: 3, name: 'Alice', isFriend: false },
-    { id: 4, name: 'Bob', isFriend: true },
-  ]);
+  const [foundUsers, setFoundUsers] = useState<User[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const handleAddFriend = (id: number) => {
-    setFoundUsers((prevUsers) =>
-      prevUsers.map((user) =>
-        user.id === id ? { ...user, isFriend: true } : user
-      )
-    );
+  useEffect(() => {
+    const fetchUser = async () => {
+      const { data: { user }, error } = await supabase.auth.getUser();
+      if (error) {
+        console.error('Error fetching user:', error);
+      } else {
+        setUser(user as User);
+      }
+    };
+
+    fetchUser();
+  }, []);
+
+  const fetchEdgeFunction = async () => {
+    try {
+      const { data, error } = await supabase.functions.invoke('users', {
+        body: { name: 'Functions' },
+      });
+
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      setFoundUsers(data);
+    } catch (error) {
+      console.error('Error fetching users:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const renderItem = ({ item }: { item: { id: number; name: string; isFriend: boolean } }) => (
+  useEffect(() => {
+    fetchEdgeFunction();
+  }, []);
+
+  // Function to handle adding a friend
+  const handleAddFriend = async (friendId: string) => {
+    if (!user) {
+      Alert.alert('Error', 'User not logged in');
+      return;
+    }
+  
+    try {
+      // Call the Supabase Edge Function "add-friend"
+      const { data, error } = await supabase.functions.invoke('add-friend', {
+        body: { id_user1: user.id, id_user2: friendId }, // Update to send id_user1 and id_user2
+      });
+  
+      if (error) {
+        if (error instanceof FunctionsHttpError) {
+          const errorMessage = await error.context.json();
+          console.log('Function returned an error', errorMessage);
+        } else if (error instanceof FunctionsRelayError) {
+          console.log('Relay error:', error.message);
+        } else if (error instanceof FunctionsFetchError) {
+          console.log('Fetch error:', error.message);
+        } else {
+          console.log('Unknown error:', error.message);
+        }
+        throw new Error(error.message);
+      }
+  
+      setFoundUsers((prevUsers) =>
+        prevUsers.map((user) =>
+          user.id === friendId ? { ...user, isFriend: true } : user
+        )
+      );
+  
+      Alert.alert('Success', 'Friend added successfully!');
+    } catch (error) {
+      console.error('Error adding friend:', error);
+      Alert.alert('Error', 'Failed to add friend');
+    }
+  };
+
+  const renderItem = ({ item }: { item: User }) => (
     <ListItem
-      title={item.name}
+      title={item.nom}
       accessoryRight={() => (
         !item.isFriend ? (
           <Button size="tiny" onPress={() => handleAddFriend(item.id)}>
             Add Friend
           </Button>
-        ) : <View /> // Return an empty View instead of null
+        ) : <View /> 
       )}
     />
   );
 
   return (
     <Layout style={styles.container}>
-      <List
-        data={foundUsers}
-        renderItem={renderItem}
-        style={styles.list}
-      />
-      <Input
-        placeholder="Type Here..."
-        value={search}
-        onChangeText={setSearch}
-        style={styles.searchBar}
-      />
+      {loading ? (
+        <View><Text>Loading...</Text></View>
+      ) : (
+        <>
+          <List
+            data={foundUsers}
+            renderItem={renderItem}
+            style={styles.list}
+          />
+          <Input
+            placeholder="Type Here..."
+            value={search}
+            onChangeText={setSearch}
+            style={styles.searchBar}
+          />
+        </>
+      )}
     </Layout>
   );
 }
@@ -53,7 +133,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingBottom: 20, // Add padding to avoid overlap with the search bar
+    paddingBottom: 20,
   },
   list: {
     width: '100%',
