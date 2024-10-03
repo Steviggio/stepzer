@@ -1,3 +1,12 @@
+## Mettre en place des edges functions
+
+supabase functions <fonction>
+supabase functions deploy <fonction> --project-ref njnbnseltpcmtrzsxpeq
+
+## Configurer le .env pour chaque fonction
+
+supabase secrets set --env-file .\supabase\functions\<nomfonction>\.env   
+
 # Welcome to your Expo app 👋
 
 This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
