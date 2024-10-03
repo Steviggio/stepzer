@@ -2,7 +2,7 @@
 
 Installer l'extension Deno sur VS CODE
 
-supabase functions `fonction`
+supabase functions new `fonction`
 
 supabase functions deploy `fonction` --project-ref njnbnseltpcmtrzsxpeq
 
