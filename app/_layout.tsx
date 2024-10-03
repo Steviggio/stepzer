@@ -14,7 +14,10 @@ export default function RootLayout() {
       const { data: { session }, error } = await supabase.auth.getSession();
       if (session) {
         // Si une session existe, rediriger vers /home
-        router.replace('/home/home');
+        const { data: { user }, error } = await supabase.auth.getUser();
+        if (user){
+          router.replace('/home/home');
+        }
       }
     };
 
