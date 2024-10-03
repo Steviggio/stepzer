@@ -17,12 +17,17 @@ export default function Login() {
       password: password,
     });
 
+    
     if (error) {
       Alert.alert(error.message);
       console.log('Sign in failed:', error.message);
     } else {
       console.log('User signed in:', session);
+      console.log('Access token:', session?.access_token); // Affiche le token d'accès
+      // Naviguer vers une autre page ou effectuer d'autres actions
+      router.push('/home/home'); // Exemple de navigation vers une page "home"
     }
+
     setLoading(false);
   }
 
@@ -61,7 +66,7 @@ export default function Login() {
           Sign in
         </Button>
 
-        <TouchableOpacity onPress={() => router.push('/auth/register')}>
+        <TouchableOpacity onPress={() => router.replace('/auth/register')}>
           <Text style={styles.link}>Don't have an account? Sign up</Text>
         </TouchableOpacity>
       </View>
