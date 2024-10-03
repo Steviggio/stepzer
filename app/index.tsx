@@ -4,10 +4,14 @@ import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
 import Auth from '../components/Auth'
 import { Session } from '@supabase/supabase-js'
+import { TouchableOpacity } from "react-native-gesture-handler";
+import { useRouter } from "expo-router";
+import Register from "./auth/register";
 
 export default function Index() {
 
   const [session, setSession] = useState<Session | null>(null)
+  const router = useRouter()
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -20,15 +24,7 @@ export default function Index() {
   }, [])
 
   return (
-    <View
-      style={{
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
-      <Auth />
-    </View>
+    <Register/>
   );
 }
 // steve.mothmora@gmail.com
