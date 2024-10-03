@@ -23,6 +23,20 @@ export default function Register() {
       console.log('Sign up failed:', error.message);
     } else {
       console.log('User signed up:', session);
+      // on va update la table utilisateur (on va changer le nom là où l'email est égal à l'email de l'utilisateur qu'on vient de créer)
+      const { data, error } = await supabase
+        .from('utilisateur')
+        .update({ nom: name })
+        .match({ email: email });
+
+      if (error) {
+        Alert.alert('Erreur lors de la mise à jour de l\'utilisateur');
+        console.error('Error updating user:', error.message);
+      } else {
+        Alert.alert('Utilisateur créé avec succès');
+        router.push('/auth/login');
+        console.log('User updated:', data);
+      }
     }
     setLoading(false);
   }
