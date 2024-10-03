@@ -17,6 +17,12 @@ export default function Home() {
       }
     };
 
+    console.log('\n\n FETCHING STEPS \n\n')
+
+    GoogleFit.checkIsAuthorized().then(() => {
+      console.log(GoogleFit.isEnabled) // Then you can simply refer to `GoogleFit.isAuthorized` boolean.
+  })
+
     const fetchSteps = async () => {
       const options = {
         scopes: [
@@ -28,6 +34,7 @@ export default function Home() {
       GoogleFit.authorize(options)
         .then(authResult => {
           if (authResult.success) {
+            console.log('Authorization successful');
             const today = new Date();
             const options = {
               startDate: today.setHours(0, 0, 0, 0).toISOString(), // Min time for today
@@ -35,17 +42,22 @@ export default function Home() {
             };
 
             GoogleFit.getDailyStepCountSamples(options).then(res => {
+              console.log('Step count samples:', res);
               if (res.length > 0) {
                 const stepsToday = res[0].steps.reduce((total, step) => total + step.value, 0);
                 setSteps(stepsToday);
+              } else {
+                console.log('No step count samples available');
               }
+            }).catch(error => {
+              console.error('Error fetching step count samples:', error);
             });
           } else {
             console.error('AUTH_DENIED', authResult.message);
           }
         })
-        .catch(() => {
-          console.error('AUTH_ERROR');
+        .catch(error => {
+          console.error('AUTH_ERROR', error);
         });
     };
 
