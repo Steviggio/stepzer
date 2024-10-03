@@ -1,5 +1,7 @@
 ## Mettre en place des edges functions
 
+Installer l'extension Deno sur VS CODE
+
 supabase functions <fonction>
 
 supabase functions deploy <fonction> --project-ref njnbnseltpcmtrzsxpeq
