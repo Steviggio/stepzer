@@ -65,7 +65,7 @@ export default function Register() {
         <Button disabled={loading} onPress={signUpWithEmail}>
           Sign up
         </Button>
-        <TouchableOpacity onPress={() => router.push('/auth/login')}>
+        <TouchableOpacity onPress={() => router.push('/pedometer')}>
           <Text style={styles.link}>Already have an account? Sign in</Text>
         </TouchableOpacity>
       </View>
