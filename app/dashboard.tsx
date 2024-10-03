@@ -3,6 +3,8 @@ import { View, Text } from 'react-native';
 import { supabase } from '../lib/supabase';
 import { useRouter } from 'expo-router';
 
+
+
 // Définir le type User
 export type User = {
   uid: string; 

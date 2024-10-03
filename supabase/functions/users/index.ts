@@ -10,9 +10,6 @@ const supabaseUrl = Deno.env.get("_SUPABASE_URL")!
 const supabaseAnonKey = Deno.env.get("_SUPABASE_SERVICE_KEY")!
 const supabase = createClient(supabaseUrl, supabaseAnonKey)
 
-
-console.log("Hello from Functions!")
-
 Deno.serve(async (req) => {
   const { name } = await req.json()
 

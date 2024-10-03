@@ -1,11 +1,17 @@
 ## Mettre en place des edges functions
 
 supabase functions <fonction>
+
 supabase functions deploy <fonction> --project-ref njnbnseltpcmtrzsxpeq
 
 ## Configurer le .env pour chaque fonction
 
-supabase secrets set --env-file .\supabase\functions\<nomfonction>\.env   
+supabase secrets set --env-file .\supabase\functions\<nomfonction>\.env 
+
+## Installation UI Kitten 
+
+npm i @ui-kitten/components @eva-design/eva react-native-svg
+
 
 # Welcome to your Expo app 👋
 
