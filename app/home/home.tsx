@@ -78,16 +78,33 @@ export default function Home() {
 
   return (
     <Layout style={styles.container}>
-      <Text category='h1'>Home</Text>
-      <Text>Pedometer.isAvailableAsync(): {isPedometerAvailable}</Text>
-      <Text>Steps taken in the last 24 hours: {pastStepCount}</Text>
-      <Text>Walk! And watch this go up: {currentStepCount}</Text>
-      <Text>{email ? `Email: ${email}` : 'No user logged in'}</Text>
+      <Text>Bonjour <Text category='h8'>{email ? `Email: ${email}` : 'No user logged in'}</Text></Text>
+      <Layout style={styles.roundedContainer}>
+        <View style={styles.topContainer}>
+          <View style={[styles.group, styles.scaled]}>
+            <Text style={styles.largeText}>15 000</Text>
+            <Text style={styles.smallText}>Objectif</Text>
+          </View>
+          <View style={styles.group}>
+            <Text style={[styles.largeText, styles.boldText]}>4 978</Text>
+            <Text style={styles.smallText}>Pas</Text>
+          </View>
+          <View style={[styles.group, styles.scaled]}>
+            <Text style={styles.largeText}>5.79 km</Text>
+            <Text style={styles.smallText}>Distance</Text>
+          </View>
+        </View>
+        <View style={styles.progressBar}>
+          <View style={styles.innerBar}/>
+        </View>
+        <Text style={styles.percentageText}>+25% par rapport à hier</Text>
+      </Layout>
       <List
         data={friends}
         renderItem={renderItem}
         style={styles.list}
       />
+      
     </Layout>
   );
 }
@@ -100,5 +117,57 @@ const styles = StyleSheet.create({
   list: {
     marginTop: 16,
     width: '100%',
+  },
+  progressBar:{
+    backgroundColor: '#B8B8B8',
+    borderRadius: 10,
+    width: '100%',
+    height: 8,
+    padding: 0,
+  },
+  innerBar : {
+    backgroundColor: '#000000',
+    borderRadius: 10,
+    height: '100%',
+    width: '50%',
+  },
+  roundedContainer: {
+    backgroundColor: '#f0f0f0',
+    borderRadius: 10,
+    padding: 26,
+    marginTop: 16,
+    gap: 16,
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  topContainer:{
+    flexDirection: 'row',
+    gap: 24,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  percentageText: {
+    marginTop: 16,
+    textAlign: 'center',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  group: {
+    alignItems: 'center',
+  },
+  scaled: {
+    transform: [{ scale: 0.8 }],
+  },
+  largeText: {
+    fontSize: 18,
+    textAlign: 'center',
+  },
+  smallText: {
+    fontSize: 14,
+    textAlign: 'center',
+  },
+  boldText: {
+    fontWeight: 'bold',
   },
 });
