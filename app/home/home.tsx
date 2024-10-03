@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, StyleSheet } from 'react-native';
-import { Text, List, ListItem, Layout } from '@ui-kitten/components';
+import { Text, List, ListItem, Layout, Button } from '@ui-kitten/components'; // Ajout du Button
 import { Pedometer } from 'expo-sensors';
 import { supabase } from '@/lib/supabase';
 import { User } from '../../constants/User';
@@ -44,15 +44,6 @@ export default function Home() {
       const end = new Date();
       const start = new Date();
       start.setDate(end.getDate() - 1);
-
-      Pedometer.getStepCountAsync(start, end).then(
-        (result) => {
-          setPastStepCount(result.steps);
-        },
-        (error) => {
-          console.error('Could not get stepCount: ' + error);
-        }
-      );
 
       const subscription = Pedometer.watchStepCount((result) => {
         setCurrentStepCount(result.steps);
@@ -104,6 +95,16 @@ export default function Home() {
     }
   }, [user]);
 
+  const handleLogout = async () => {
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      console.error('Error during sign out:', error);
+    } else {
+      setUser(null);
+      setEmail(null);
+    }
+  };
+
   const renderItem = ({ item }: { item: Friend }) => (
     <ListItem
       title={`${item.nom}`}
@@ -113,7 +114,8 @@ export default function Home() {
 
   return (
     <Layout style={styles.container}>
-      <Text>Bonjour <Text category='h8'>{email ? `Email: ${email}` : 'No user logged in'}</Text></Text>
+      <Text>Bonjour <Text category='h8'>{email ? `Email: ${email}` : 'Alexandre'}</Text></Text>
+      
       <Layout style={styles.roundedContainer}>
         <View style={styles.topContainer}>
           <View style={[styles.group, styles.scaled]}>
@@ -134,12 +136,17 @@ export default function Home() {
         </View>
         <Text style={styles.percentageText}>+25% par rapport à hier</Text>
       </Layout>
+
       <List
         data={friends}
         renderItem={renderItem}
         style={styles.list}
       />
-      
+
+      <Button onPress={handleLogout} style={styles.logoutButton}>
+        Se déconnecter
+      </Button>
+
     </Layout>
   );
 }
@@ -204,5 +211,8 @@ const styles = StyleSheet.create({
   },
   boldText: {
     fontWeight: 'bold',
+  },
+  logoutButton: {
+    marginTop: 20,
   },
 });
