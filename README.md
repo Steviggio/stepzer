@@ -1,6 +1,7 @@
 ## Mettre en place des edges functions
 
 supabase functions <fonction>
+
 supabase functions deploy <fonction> --project-ref njnbnseltpcmtrzsxpeq
 
 ## Configurer le .env pour chaque fonction
